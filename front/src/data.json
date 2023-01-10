@@ -1,0 +1,22 @@
+[
+    {
+        "first_name": "Antoine",
+        "last_name": "Zagnoni",
+        "function": "User"
+    },
+    {
+        "first_name": "Quentin",
+        "last_name": "Tenga",
+        "function": "User"
+    },
+    {
+        "first_name": "Cyril",
+        "last_name": "Douchet",
+        "function": "User"
+    },
+    {
+        "first_name": "Thibault",
+        "last_name": "Jezequel",
+        "function": "User"
+    }
+]

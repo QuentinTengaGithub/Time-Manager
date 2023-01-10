@@ -1,0 +1,38 @@
+FROM elixir:latest
+
+RUN apt-get update -y && apt-get install -y postgresql-client inotify-tools
+
+RUN mkdir /back
+COPY . /back
+WORKDIR /back
+
+ARG PGUSER
+ARG PGPASSWORD
+ARG PGDATABASE
+ARG PGHOST
+ARG PGPORT
+ARG ORIGIN_DOMAIN
+
+ENV PGUSER=$PGUSER
+ENV PGPASSWORD=$PGPASSWORD
+ENV PGDATABASE=$PGDATABASE
+ENV PGHOST=$PGHOST
+ENV PGPORT=$PGPORT
+ENV ORIGIN_DOMAIN=$ORIGIN_DOMAIN
+ENV MIX_ENV=prod
+
+RUN mix local.hex --force
+# RUN mix archive.install hex phx_new
+# RUN mix archive.install --force hex phx_new
+# RUN ecto.create
+# RUN ecto.migrate
+
+RUN mix local.rebar --force
+
+RUN mix deps.get --only prod
+
+RUN mix compile
+
+RUN mix assets.deploy
+
+CMD [ "/back/entrypoint.sh" ]

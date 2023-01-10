@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  bdd:
+    image: postgres:latest
+    ports:
+      - "7100:5432"
+    env_file:
+      - .env
+    restart: always
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+      args:
+        - VUE_APP_BASE_URI=${VUE_APP_BASE_URI}
+    ports:
+      - "7101:7101"
+    volumes:
+      - ./front:/front
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+      args:
+        - PGUSER=${POSTGRES_USER}
+        - PGPASSWORD=${POSTGRES_PASSWORD}
+        - PGDATABASE=${POSTGRES_DATABASE}
+        - PGPORT=5432
+        - PGHOST=localhost
+        - ORIGIN_DOMAIN=${FRONT_ORIGIN_DOMAIN}
+    depends_on:
+      - "bdd"
+    volumes:
+      - ./back:/back
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    # environment:
+    #   PGUSER: "${POSTGRES_USER}"
+    #   PGPASSWORD: "${POSTGRES_PASSWORD}"
+    #   PGDATABASE: "${POSTGRES_DATABASE}"
+    #   PGPORT: 5432
+    #   PGHOST: "localhost"
+    ports:
+      - "7102:4000"
